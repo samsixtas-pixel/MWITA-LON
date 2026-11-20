@@ -1,0 +1,25 @@
+{
+  "name": "Weekly Loan Manager",
+  "short_name": "Loan Manager",
+  "description": "Weekly loans, repayments and customer management",
+  "start_url": "./dashboard.php",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#111111",
+  "theme_color": "#0249e1",
+  "icons": [
+    {
+      "src": "assets/loan-manager-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/loan-manager-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

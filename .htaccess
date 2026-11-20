@@ -1,0 +1,31 @@
+# Apache 2.4 hardening for the application root.
+# Keep directory listings off and block developer scratch files that
+# should never be served to visitors.
+Options -Indexes
+
+<IfModule mod_authz_core.c>
+  <FilesMatch "^(debug_purchase|practice)\.php$">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+<IfModule !mod_authz_core.c>
+  <FilesMatch "^(debug_purchase|practice)\.php$">
+    Order Deny,Allow
+    Deny from all
+  </FilesMatch>
+</IfModule>
+
+# Allow the administrator's workbook upload (Excel files are mostly
+# compressed XML and easily exceed PHP's 2 MB default).
+<IfModule mod_php7.c>
+  php_value upload_max_filesize 20M
+  php_value post_max_size 24M
+  php_value max_execution_time 300
+  php_value memory_limit 512M
+</IfModule>
+<IfModule mod_php.c>
+  php_value upload_max_filesize 20M
+  php_value post_max_size 24M
+  php_value max_execution_time 300
+  php_value memory_limit 512M
+</IfModule>
