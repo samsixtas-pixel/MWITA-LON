@@ -69,41 +69,179 @@ $lang = current_lang();
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= t('Sign in') ?> | <?= e(Settings::businessName()) ?></title>
-<meta name="theme-color" content="#f5f7fb">
+<meta name="theme-color" content="#eef3fc">
 <link rel="icon" type="image/svg+xml" href="<?= BASE_URL ?>assets/loan-manager-icon.svg">
 <link rel="stylesheet" href="<?= BASE_URL ?>assets/vendor/bootstrap-icons.css">
 <style>
-  :root{--blue:#0249e1;--blue-dark:#0137a6;--ink:#111827;--muted:#667085;--line:#d9e1ed;--paper:#f5f7fb;--lime:#dafb71}
-  *{box-sizing:border-box}html,body{min-height:100%;margin:0}
-  body{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
-  .scene{min-height:100vh;display:grid;place-items:center;padding:28px;background:linear-gradient(145deg,#f8faff 0%,#eef3fc 100%)}
-  .login-shell{width:min(100%,440px)}
-  .login-card{background:#fff;border:1px solid #e4eaf3;border-radius:18px;padding:clamp(26px,6vw,42px);box-shadow:0 18px 55px rgba(20,44,84,.09),0 2px 8px rgba(20,44,84,.04)}
-  .wordmark{display:flex;align-items:center;gap:11px;margin-bottom:34px;color:var(--ink);font-size:16px;font-weight:700;letter-spacing:-.02em}
-  .wordmark b{color:var(--blue);font-weight:750}
-  .brand-badge{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:var(--blue);color:var(--lime);font-size:21px}
-  .intro h1{margin:0 0 7px;font-size:28px;line-height:1.2;letter-spacing:-.04em;font-weight:750}
-  .intro p{margin:0 0 26px;color:var(--muted);font-size:14px}
-  .alert-box{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;margin:0 0 18px;border:1px solid #f2c7cf;border-radius:10px;background:#fff5f7;color:#9e243b;font-size:13.5px}
-  .alert-box i{margin-top:2px;flex-shrink:0}
-  .login-form{display:grid;gap:15px}
-  .field{position:relative;display:block}
-  .field>i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#7b8798;font-size:16px;pointer-events:none}
-  .field input{width:100%;height:50px;padding:0 46px 0 42px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink);font:inherit;font-size:14px;outline:none;transition:border-color .16s,box-shadow .16s}
-  .field input::placeholder{color:#8a94a3}
-  .field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(2,73,225,.12)}
-  .field:focus-within>i{color:var(--blue)}
-  .reveal{position:absolute;right:7px;top:50%;transform:translateY(-50%);padding:8px;border:0;border-radius:7px;background:transparent;color:#707b8b;font-size:16px;cursor:pointer}
-  .reveal:hover{color:var(--blue)}
-  .submit{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:50px;margin-top:3px;border:0;border-radius:9px;background:var(--blue);color:#fff;font:inherit;font-size:14px;font-weight:650;cursor:pointer;transition:background .16s,transform .16s}
-  .submit:hover{background:var(--blue-dark)}.submit:active{transform:translateY(1px)}.submit:disabled{opacity:.7;cursor:wait}
-  .meta-row{display:flex;justify-content:center;margin-top:22px}
-  .lang-pill{display:flex;padding:3px;gap:3px;border:1px solid var(--line);border-radius:9px;background:#f8faff}
-  .lang-pill a{padding:5px 11px;border-radius:6px;color:var(--muted);font-size:12px;font-weight:650;text-decoration:none}
-  .lang-pill a.on{background:#e6effc;color:var(--blue-dark)}
-  .login-foot{margin-top:20px;text-align:center;color:#7b8798;font-size:12px}
-  @media(max-width:480px){.scene{padding:16px}.login-card{border-radius:14px}.wordmark{margin-bottom:28px}.intro h1{font-size:25px}}
-  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  :root{
+    --page:#eef3fc;
+    --card:#0f1b33;
+    --card-edge:#22345c;
+    --field:#0b1526;
+    --field-edge:#2a3f6e;
+    --accent:#7CFF6B;
+    --accent-dark:#5ee04d;
+    --accent2:#3b6fe0;
+    --text:#eef2ff;
+    --muted:#93a1c4;
+    --blue-1:#4f8dff;
+    --blue-2:#2f5fd0;
+    --blue-3:#9dc0ff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+    background:var(--page);
+    color:var(--text);
+  }
+
+  /* ---- white background with blue color variations ---- */
+  .scene{
+    min-height:100vh;
+    display:grid;
+    place-items:center;
+    padding:24px;
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(560px 420px at 12% 8%,  rgba(79,141,255,.35), transparent 65%),
+      radial-gradient(520px 460px at 88% 18%, rgba(47,95,208,.28),  transparent 65%),
+      radial-gradient(640px 520px at 80% 92%, rgba(157,192,255,.45), transparent 65%),
+      radial-gradient(480px 420px at 10% 88%, rgba(63,110,224,.22),  transparent 65%),
+      var(--page);
+  }
+
+  .login-shell{
+    position:relative;
+    z-index:1;
+    width:min(400px,100%);
+    animation:rise .45s ease-out both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+  .login-card{
+    background:var(--card);
+    border:1px solid var(--card-edge);
+    border-radius:16px;
+    padding:38px 32px 26px;
+    box-shadow:0 24px 60px rgba(30,60,130,.28);
+  }
+
+  .wordmark{
+    display:flex;align-items:center;gap:12px;
+    font-size:15px;font-weight:600;letter-spacing:.22em;
+    color:var(--text);
+    margin-bottom:28px;
+  }
+  .wordmark b{color:var(--accent);font-weight:700}
+  .brand-badge{
+    width:46px;height:46px;border-radius:12px;
+    display:grid;place-items:center;
+    background:var(--accent);
+    color:#0a0f1c;font-size:22px;
+    flex-shrink:0;
+  }
+
+  .intro h1{font-size:26px;font-weight:700;margin-bottom:6px}
+  .intro p{color:var(--muted);font-size:13.5px;line-height:1.55;margin-bottom:24px}
+
+  .alert-box{
+    display:flex;align-items:flex-start;gap:10px;
+    background:rgba(255,90,90,.1);
+    border:1px solid rgba(255,90,90,.35);
+    color:#ff9d9d;
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:13.5px;
+    margin-bottom:18px;
+  }
+  .alert-box i{color:#ff7b7b;flex-shrink:0;margin-top:1px}
+
+  .field{
+    position:relative;
+    display:block;
+    margin-bottom:14px;
+  }
+  .field > i{
+    position:absolute;left:16px;top:50%;transform:translateY(-50%);
+    font-size:17px;color:var(--muted);
+    transition:color .2s;
+    pointer-events:none;
+  }
+  .field input{
+    width:100%;
+    background:var(--field);
+    border:1px solid var(--field-edge);
+    border-radius:10px;
+    padding:14px 46px 14px 46px;
+    color:var(--text);
+    font-size:15px;
+    font-family:inherit;
+    outline:none;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .field input::placeholder{color:var(--muted)}
+  .field input:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(124,255,107,.15);
+  }
+  .field:focus-within > i{color:var(--accent)}
+  .reveal{
+    position:absolute;right:8px;top:50%;transform:translateY(-50%);
+    background:none;border:none;cursor:pointer;
+    color:var(--muted);
+    font-size:17px;
+    padding:8px;
+    border-radius:8px;
+  }
+  .reveal:hover{color:var(--text)}
+
+  .submit{
+    width:100%;
+    margin-top:10px;
+    padding:15px;
+    border:none;border-radius:10px;
+    background:var(--accent);
+    color:#0a0f1c;
+    font-size:15.5px;font-weight:700;
+    font-family:inherit;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    transition:background .15s, transform .15s;
+  }
+  .submit:hover{background:var(--accent-dark);transform:translateY(-1px)}
+  .submit:active{transform:translateY(0) scale(.98)}
+  .submit:disabled{opacity:.7;cursor:default;transform:none}
+
+  .meta-row{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-top:22px;gap:10px;flex-wrap:wrap;
+  }
+  .meta-row > span:first-child{
+    display:flex;align-items:center;gap:6px;
+    color:var(--muted);font-size:12px;
+  }
+  .lang-pill{
+    display:flex;background:var(--field);
+    border:1px solid var(--field-edge);
+    border-radius:8px;padding:3px;gap:2px;
+  }
+  .lang-pill a{
+    color:var(--muted);
+    font-size:12px;font-weight:600;
+    padding:5px 12px;border-radius:6px;
+    text-decoration:none;
+    transition:all .15s;
+  }
+  .lang-pill a.on{background:var(--accent2);color:#fff}
+
+  .login-foot{
+    text-align:center;
+    color:#7d8db3;
+    font-size:12px;
+    margin-top:22px;
+  }
 </style>
 </head>
 <body>
@@ -120,7 +258,7 @@ $lang = current_lang();
       <div class="intro">
 
         <h1><?= t('Welcome back') ?></h1>
-        <p><?= t('Enter your details to continue.') ?></p>
+        <p><?= t('Sign in to record payments, follow up arrears and manage the loan book.') ?></p>
       </div>
 
       <?php if ($error !== ''): ?>
@@ -137,24 +275,26 @@ $lang = current_lang();
         <label class="field">
           <i class="bi bi-person"></i>
           <input type="text" name="username" value="<?= e($username) ?>" placeholder="<?= t('Username') ?>"
-                 aria-label="<?= t('Username') ?>" autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus>
+                 autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus>
         </label>
 
         <label class="field">
           <i class="bi bi-lock"></i>
           <input type="password" name="password" id="password" placeholder="<?= t('Password') ?>"
-                 aria-label="<?= t('Password') ?>" autocomplete="current-password" required>
-          <button type="button" class="reveal" id="revealBtn" aria-label="<?= t('Show password') ?>" aria-pressed="false">
+                 autocomplete="current-password" required>
+          <button type="button" class="reveal" id="revealBtn" aria-label="<?= t('Show password') ?>">
             <i class="bi bi-eye"></i>
           </button>
         </label>
 
         <button type="submit" class="submit" id="submitBtn">
+          <i class="bi bi-box-arrow-in-right"></i>
           <span><?= t('Sign in') ?></span>
         </button>
       </form>
 
       <div class="meta-row">
+        <span><i class="bi bi-shield-lock"></i> <?= t('') ?></span>
         <span class="lang-pill">
           <?php foreach (available_languages() as $code => $label): ?>
             <a class="<?= $code === $lang ? 'on' : '' ?>" href="?lang=<?= e($code) ?>"><?= strtoupper($code) ?></a>
@@ -164,7 +304,8 @@ $lang = current_lang();
 
     </div>
 
-    <div class="login-foot"><?= e(Settings::businessName()) ?></div>
+    <div class="login-foot">
+    </div>
   </div>
 </div>
 
@@ -175,7 +316,6 @@ document.getElementById('revealBtn').addEventListener('click', function () {
   const show  = input.type === 'password';
   input.type  = show ? 'text' : 'password';
   icon.className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
-  this.setAttribute('aria-pressed', show ? 'true' : 'false');
 });
 
 document.querySelector('.login-form').addEventListener('submit', function () {
