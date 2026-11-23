@@ -243,6 +243,7 @@ CREATE TABLE IF NOT EXISTS `payments` (
   UNIQUE KEY `uq_pay_reference` (`reference`),
   UNIQUE KEY `uq_pay_legacy_reference` (`legacy_reference`),
   KEY `idx_pay_loan` (`loan_id`,`status`),
+  KEY `idx_pay_loan_status_date_id` (`loan_id`,`status`,`paid_at`,`id`),
   KEY `idx_pay_customer` (`customer_id`),
   KEY `idx_pay_paid_at` (`paid_at`),
   CONSTRAINT `fk_pay_loan` FOREIGN KEY (`loan_id`) REFERENCES `loans` (`id`),

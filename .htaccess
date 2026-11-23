@@ -1,31 +1,91 @@
-# Apache 2.4 hardening for the application root.
-# Keep directory listings off and block developer scratch files that
-# should never be served to visitors.
+# ============================================================
+# LOAN MANAGEMENT SYSTEM - APACHE CONFIGURATION
+# ============================================================
+
+# Disable directory listings.
 Options -Indexes
 
+# ============================================================
+# PROTECT DEVELOPER FILES
+# ============================================================
+
 <IfModule mod_authz_core.c>
-  <FilesMatch "^(debug_purchase|practice)\.php$">
-    Require all denied
-  </FilesMatch>
-</IfModule>
-<IfModule !mod_authz_core.c>
-  <FilesMatch "^(debug_purchase|practice)\.php$">
-    Order Deny,Allow
-    Deny from all
-  </FilesMatch>
+    <FilesMatch "^(debug_purchase|practice)\.php$">
+        Require all denied
+    </FilesMatch>
 </IfModule>
 
-# Allow the administrator's workbook upload (Excel files are mostly
-# compressed XML and easily exceed PHP's 2 MB default).
-<IfModule mod_php7.c>
-  php_value upload_max_filesize 20M
-  php_value post_max_size 24M
-  php_value max_execution_time 300
-  php_value memory_limit 512M
+<IfModule !mod_authz_core.c>
+    <FilesMatch "^(debug_purchase|practice)\.php$">
+        Order Deny,Allow
+        Deny from all
+    </FilesMatch>
 </IfModule>
+
+
+# ============================================================
+# CLEAN URL ROUTING
+# ============================================================
+
+<IfModule mod_rewrite.c>
+
+    RewriteEngine On
+
+    # --------------------------------------------------------
+    # EBENEZAH LOANS - ROOT DOMAIN
+    # --------------------------------------------------------
+
+    # Redirect index.php to the domain root.
+    RewriteCond %{HTTP_HOST} ^ebenezahloans\.dpdns\.org$ [NC]
+    RewriteCond %{THE_REQUEST} \s/+index\.php(?:[\s?]) [NC]
+    RewriteRule ^index\.php$ https://ebenezahloans.dpdns.org/ [R=308,L,NE]
+
+    # Remove .php extensions on the loan domain.
+    RewriteCond %{HTTP_HOST} ^ebenezahloans\.dpdns\.org$ [NC]
+    RewriteCond %{THE_REQUEST} \s/+(.+?)\.php(?:[\s?]) [NC]
+    RewriteRule ^(.+)\.php$ https://ebenezahloans.dpdns.org/$1 [R=308,L,NE]
+
+
+    # --------------------------------------------------------
+    # WISDOM WEBSITE - /loan/ ALIAS
+    # --------------------------------------------------------
+
+    # Redirect index.php to the alias directory.
+    RewriteCond %{HTTP_HOST} ^212\.47\.66\.99$ [NC]
+    RewriteCond %{THE_REQUEST} \s/+loan/index\.php(?:[\s?]) [NC]
+    RewriteRule ^index\.php$ /loan/ [R=308,L,NE]
+
+    # Remove .php extensions under the Wisdom alias.
+    RewriteCond %{HTTP_HOST} ^212\.47\.66\.99$ [NC]
+    RewriteCond %{THE_REQUEST} \s/+loan/(.+?)\.php(?:[\s?]) [NC]
+    RewriteRule ^(.+)\.php$ /loan/$1 [R=308,L,NE]
+
+
+    # --------------------------------------------------------
+    # INTERNAL PHP ROUTING
+    # --------------------------------------------------------
+
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^(.+?)/?$ $1.php [END]
+
+</IfModule>
+
+
+# ============================================================
+# EXCEL WORKBOOK UPLOAD CONFIGURATION
+# ============================================================
+
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 20M
+    php_value post_max_size 24M
+    php_value max_execution_time 300
+    php_value memory_limit 512M
+</IfModule>
+
 <IfModule mod_php.c>
-  php_value upload_max_filesize 20M
-  php_value post_max_size 24M
-  php_value max_execution_time 300
-  php_value memory_limit 512M
+    php_value upload_max_filesize 20M
+    php_value post_max_size 24M
+    php_value max_execution_time 300
+    php_value memory_limit 512M
 </IfModule>

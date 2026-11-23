@@ -175,9 +175,6 @@ class Security
         try {
             $db = Database::getConnection();
 
-            $db->prepare("DELETE FROM login_attempts WHERE attempted_at < DATE_SUB(NOW(), INTERVAL 1 DAY)")
-               ->execute();
-
             $stmt = $db->prepare(
                 "SELECT COUNT(*) FROM login_attempts
                  WHERE (username = :u OR ip_address = :ip)
@@ -192,10 +189,10 @@ class Security
 
             if ($count >= $maxAttempts) {
                 $stmt = $db->prepare(
-                    "SELECT TIMESTAMPDIFF(SECOND, NOW(), DATE_ADD(attempted_at, INTERVAL :w SECOND)) AS wait_secs
-                     FROM login_attempts
-                     WHERE (username = :u OR ip_address = :ip) AND success = 0
-                     ORDER BY attempted_at ASC LIMIT 1"
+                    "SELECT TIMESTAMPDIFF(SECOND, NOW(), DATE_ADD(MAX(attempted_at), INTERVAL :w SECOND)) AS wait_secs
+                       FROM login_attempts
+                      WHERE (username = :u OR ip_address = :ip) AND success = 0
+                        AND attempted_at >= DATE_SUB(NOW(), INTERVAL :w SECOND)"
                 );
                 $stmt->bindValue(':u', $username);
                 $stmt->bindValue(':ip', $ip);
@@ -220,6 +217,12 @@ class Security
                 "INSERT INTO login_attempts (username, ip_address, success) VALUES (:u, :ip, :s)"
             );
             $stmt->execute(['u' => $username, 'ip' => $ip, 's' => $success ? 1 : 0]);
+
+            // Cleanup is sampled and bounded so it does not add a full-table scan
+            // to every login attempt.
+            if (random_int(1, 100) === 1) {
+                $db->exec("DELETE FROM login_attempts WHERE attempted_at < DATE_SUB(NOW(), INTERVAL 1 DAY) LIMIT 5000");
+            }
 
             if ($success) {
                 $db->prepare("DELETE FROM login_attempts WHERE username = :u")->execute(['u' => $username]);

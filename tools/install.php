@@ -168,6 +168,9 @@ if ($added > 0) {
 
 // Indexes that only exist on installs created after the identity release.
 $indexes = [
+    'payments' => [
+        'idx_pay_loan_status_date_id' => 'KEY `idx_pay_loan_status_date_id` (`loan_id`,`status`,`paid_at`,`id`)',
+    ],
     'customer_documents' => [
         'uq_document_uuid' => 'UNIQUE KEY `uq_document_uuid` (`document_uuid`)',
         'idx_docs_category' => 'KEY `idx_docs_category` (`customer_id`,`document_category`)',

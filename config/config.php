@@ -12,9 +12,7 @@ declare(strict_types=1);
 // ============================================================
 // 1. ENVIRONMENT
 // ============================================================
-$isLocal = in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true)
-        || in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1'], true)
-        || str_contains($_SERVER['HTTP_HOST'] ?? '', 'localhost');
+$isLocal = in_array($_SERVER['REMOTE_ADDR'] ?? '', ['127.0.0.1', '::1'], true);
 
 define('APP_ENV', $isLocal ? 'development' : 'production');
 
@@ -67,7 +65,16 @@ define('APP_TAGLINE', 'Weekly Loan Management System');
 define('APP_VERSION', '1.0.0');
 define('BASE_URL', '/loan/');
 define('APP_ROOT', dirname(__DIR__));
-define('SESSION_FINGERPRINT_SECRET', 'lms-tz-2026-change-this-long-random-secret');
+$fingerprintSecret = getenv('SESSION_FINGERPRINT_SECRET');
+if ($fingerprintSecret === false || strlen($fingerprintSecret) < 32) {
+    if (APP_ENV === 'production') {
+        error_log('SESSION_FINGERPRINT_SECRET must be configured with at least 32 characters.');
+        http_response_code(500);
+        die('Service temporarily unavailable. Please contact the administrator.');
+    }
+    $fingerprintSecret = 'local-development-only-secret-change-before-deployment';
+}
+define('SESSION_FINGERPRINT_SECRET', $fingerprintSecret);
 
 define('DEFAULT_CURRENCY', 'TZS');
 define('DISPLAY_DATE_FORMAT', 'd/m/Y');   // DD/MM/YYYY

@@ -13,13 +13,11 @@ $isAdmin      = User::isAdmin();
 $lang         = current_lang();
 
 $overdueCount    = 0;
-$incompleteCount = 0;
 $todayTotal      = 0;
 
 try {
     $overdueCount = (int) Database::getConnection()
         ->query("SELECT COUNT(*) FROM v_overdue_loans")->fetchColumn();
-    $incompleteCount = (new Customer())->countIncomplete();
     $todayTotal = (new Payment())->todayTotal()['total'] ?? 0;
 } catch (Throwable $e) {
     // Header must never break a page.

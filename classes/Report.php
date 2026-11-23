@@ -85,10 +85,6 @@ class Report extends Model
     /** Arrears ageing buckets by days overdue. */
     public function aging(): array
     {
-        $rows = $this->db->query(
-            "SELECT days_overdue, remaining_balance FROM v_overdue_loans"
-        )->fetchAll();
-
         $buckets = [
             '1-7'   => ['loans' => 0, 'amount' => 0.0],
             '8-14'  => ['loans' => 0, 'amount' => 0.0],
@@ -97,23 +93,28 @@ class Report extends Model
             '60+'   => ['loans' => 0, 'amount' => 0.0],
         ];
 
+        $rows = $this->db->query(
+            "SELECT CASE
+                    WHEN days_overdue <= 7 THEN '1-7'
+                    WHEN days_overdue <= 14 THEN '8-14'
+                    WHEN days_overdue <= 30 THEN '15-30'
+                    WHEN days_overdue <= 60 THEN '31-60'
+                    ELSE '60+'
+                    END AS bucket,
+                    COUNT(*) AS loans,
+                    COALESCE(SUM(remaining_balance), 0) AS amount
+               FROM v_overdue_loans
+              GROUP BY bucket"
+        )->fetchAll();
+
         foreach ($rows as $row) {
-            $days = (int) $row['days_overdue'];
-
-            if ($days <= 7) {
-                $key = '1-7';
-            } elseif ($days <= 14) {
-                $key = '8-14';
-            } elseif ($days <= 30) {
-                $key = '15-30';
-            } elseif ($days <= 60) {
-                $key = '31-60';
-            } else {
-                $key = '60+';
+            $key = (string) $row['bucket'];
+            if (isset($buckets[$key])) {
+                $buckets[$key] = [
+                    'loans' => (int) $row['loans'],
+                    'amount' => (float) $row['amount'],
+                ];
             }
-
-            $buckets[$key]['loans']  += 1;
-            $buckets[$key]['amount'] += (float) $row['remaining_balance'];
         }
 
         return $buckets;
